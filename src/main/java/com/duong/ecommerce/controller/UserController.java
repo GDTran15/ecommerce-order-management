@@ -14,6 +14,8 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/users")
@@ -36,8 +38,12 @@ public class UserController {
     @GetMapping()
     public ResponseEntity<GetUserResponse> getUser(@RequestParam String username) {
         return ResponseEntity.ok(userService.getUser(username));
+    }
 
-        }
+    @GetMapping
+    public ResponseEntity<List<GetUserResponse>> getAllUser() {
+        return ResponseEntity.ok(userService.getAllUser());
+    }
 
     @PutMapping("/{userId}")
     public ResponseEntity<Void> updateUser(@PathVariable Long userId, @RequestBody @Valid CreateNewUserRequest createNewUserRequest) {

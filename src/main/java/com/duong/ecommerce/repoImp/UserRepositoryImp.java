@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -51,7 +52,34 @@ public class UserRepositoryImp implements UserRepository {
 
     @Override
     public List<User> findAll() {
-        return List.of();
+        String sql = "SELECT * FROM users";
+        List<User> users = new ArrayList<>();
+
+        try (
+                Connection connection = dataSource.getConnection();
+                PreparedStatement ps = connection.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()
+        ) {
+            while (rs.next()) {
+                User user = User.builder()
+                        .userId(rs.getLong("user_id"))
+                        .username(rs.getString("username"))
+                        .password(rs.getString("password"))
+                        .email(rs.getString("email"))
+                        .firstName(rs.getString("first_name"))
+                        .lastName(rs.getString("last_name"))
+                        .phoneNumber(rs.getString("phone_number"))
+                        .dateOfBirth(rs.getDate("date_of_birth").toLocalDate())
+                        .build();
+
+                users.add(user);
+            }
+
+            return users;
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
