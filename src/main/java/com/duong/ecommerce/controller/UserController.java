@@ -1,15 +1,18 @@
 package com.duong.ecommerce.controller;
 
 import com.duong.ecommerce.dto.user.request.CreateNewUserRequest;
+import com.duong.ecommerce.dto.user.response.GetUserResponse;
+import com.duong.ecommerce.model.User;
 import com.duong.ecommerce.service.UserService;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.repository.query.Param;
+import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.web.ErrorResponse;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -18,18 +21,27 @@ public class UserController {
 
     private final UserService userService;
 
-    @RequestMapping("/create")
+    @PostMapping()
     public ResponseEntity<Void> createUser(@RequestBody @Valid CreateNewUserRequest createNewUserRequest) {
          userService.createUser(createNewUserRequest);
          return ResponseEntity.ok().build();
     }
 
-    @RequestMapping("/delete/username")
-    public ResponseEntity<Void> deleteUser(@PathVariable String username) {
-        userService.deleteUserByUsername(username);
+    @DeleteMapping()
+    public ResponseEntity<Void> deleteUser(@RequestParam String username) {
+        userService.deleteUser(username);
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping()
+    public ResponseEntity<GetUserResponse> getUser(@RequestParam String username) {
+        return ResponseEntity.ok(userService.getUser(username));
 
+        }
+
+    @PutMapping("/{userId}")
+    public ResponseEntity<Void> updateUser(@PathVariable Long userId, @RequestBody @Valid CreateNewUserRequest createNewUserRequest) {
+        return ResponseEntity.ok().build();
+    }
 
 }
