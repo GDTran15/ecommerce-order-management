@@ -27,7 +27,7 @@ public class UserRepositoryImp implements UserRepository {
             pS.setString(1, username);
             try (ResultSet rs = pS.executeQuery()) {
                 if (!rs.next()) {
-                    Optional.empty();
+                   return  Optional.empty();
                 }
 
                 User user = User.builder()
