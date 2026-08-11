@@ -1,5 +1,6 @@
 package com.duong.ecommerce.repoImp;
 
+import com.duong.ecommerce.exception.ResourceNotFoundException;
 import com.duong.ecommerce.model.User;
 import com.duong.ecommerce.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +26,7 @@ public class UserRepositoryImp implements UserRepository {
             pS.setString(1, username);
             try (ResultSet rs = pS.executeQuery()) {
                 if (!rs.next()) {
-                    return Optional.empty();
+                    Optional.empty();
                 }
 
                 User user = User.builder()
@@ -80,4 +81,49 @@ public class UserRepositoryImp implements UserRepository {
             throw new RuntimeException(e);
         }
     }
+
+    @Override
+    public void deleteUserByUsername(String username) {
+        String sql = "DELETE FROM users WHERE username = ?";
+        try(Connection connection = dataSource.getConnection();
+            PreparedStatement pS = connection.prepareStatement(sql)
+        ){
+            pS.setString(1, username);
+            pS.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void updateUser(Long userId, User user) {
+        String sql = "UPDATE users SET username = ?, " +
+                "password = ?, " +
+                "email = ?, " +
+                "first_name = ?, " +
+                "last_name = ?, " +
+                "phone_number = ?, " +
+                "date_of_birth = ? " +
+                "WHERE user_id = ?";
+        try (Connection connection = dataSource.getConnection();
+            PreparedStatement pS = connection.prepareStatement(sql)
+        ){
+            pS.setString(1, user.getUsername());
+            pS.setString(2, user.getPassword());
+            pS.setString(3, user.getEmail());
+            pS.setString(4, user.getFirstName());
+            pS.setString(5, user.getLastName());
+            pS.setString(6, user.getPhoneNumber());
+            pS.setDate(7, Date.valueOf(user.getDateOfBirth()));
+            pS.setLong(8, userId);
+            int row = pS.executeUpdate();
+            if (row == 0) {
+                throw new ResourceNotFoundException("User is not existed");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
 }
