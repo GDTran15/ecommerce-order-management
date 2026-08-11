@@ -21,18 +21,14 @@ public class UserServiceImp implements UserService {
 
     private final UserRepository userRepository;
     private final UserToGetUserResponse userToGetUserResponse;
+    private final CreateNewUserToUser createNewUserToUser;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder(12); // tạm thời như vậy nếu sau này có authentication sửa lại
 
     @Override
     public void createUser(CreateNewUserRequest createNewUserRequest) {
-        User user = User.builder()
-                .username(createNewUserRequest.username())
-                .password(createNewUserRequest.password())
-                .email(createNewUserRequest.email())
-                .firstName(createNewUserRequest.firstName())
-                .lastName(createNewUserRequest.lastName())
-                .phoneNumber(createNewUserRequest.phoneNumber())
-                .dateOfBirth(createNewUserRequest.dateOfBirth())
-                .build();
+
+        User user = createNewUserToUser.apply(createNewUserRequest);
+        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         userRepository.save(user);
     }
 
@@ -50,4 +46,14 @@ public class UserServiceImp implements UserService {
     }
 
     @Override
+    public List<GetUserResponse> getAllUser() {
+        return userRepository.findAll().stream().map(userToGetUserResponse).toList();
+    }
+
+    @Override
+    public void updateUser(Long userId, CreateNewUserRequest createNewUserRequest) {
+        User user = createNewUserToUser.apply(createNewUserRequest);
+        //phần password này nên xem lại
+        userRepository.updateUser(userId, user);
+    }
 }
