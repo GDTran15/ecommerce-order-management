@@ -1,6 +1,6 @@
 package com.duong.ecommerce.model;
 
-import jakarta.persistence.*;
+
 
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -12,16 +12,15 @@ import org.springframework.stereotype.Component;
 import java.time.Instant;
 import java.time.LocalDate;
 
-@Component
-@Table(name = "users")
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class User {
 
-    @Id
-    private Long userId;
+
+    private Long id;
 
     @Size(min = 8, max = 20)
     @NotBlank

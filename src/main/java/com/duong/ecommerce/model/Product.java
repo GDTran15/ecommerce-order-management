@@ -1,23 +1,27 @@
 package com.duong.ecommerce.model;
 
-import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 
-@Entity
-@Table(name = "products")
+
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Product {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long productId;
-    private String productName;
-    private String productDescription;
+
+    private Long id;
+    private String name;
+    private String sku;
+    private String description;
     @Min(value = 0)
-    private BigDecimal productPrice;
+    private BigDecimal price;
     @Min(value = 0)
-    private Integer productQuantity;
+    private Integer quantity;
 
 }
