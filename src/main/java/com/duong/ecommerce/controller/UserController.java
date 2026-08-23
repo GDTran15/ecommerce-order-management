@@ -2,18 +2,20 @@ package com.duong.ecommerce.controller;
 
 import com.duong.ecommerce.dto.user.request.CreateNewUserRequest;
 import com.duong.ecommerce.dto.user.response.GetUserResponse;
-import com.duong.ecommerce.model.User;
 import com.duong.ecommerce.service.UserService;
-import jakarta.transaction.Transactional;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.repository.query.Param;
-import org.springframework.http.ProblemDetail;
-import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.web.ErrorResponse;
-import org.springframework.web.bind.annotation.*;
+import com.duong.ecommerce.utility.OnCreate;
+import com.duong.ecommerce.utility.OnUpdate;
 
+import lombok.RequiredArgsConstructor;
+
+import org.springframework.http.ResponseEntity;
+
+import org.springframework.validation.annotation.Validated;
+
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -24,8 +26,9 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping()
-    public ResponseEntity<Void> createUser(@RequestBody @Valid CreateNewUserRequest createNewUserRequest) {
-         userService.createUser(createNewUserRequest);
+    public ResponseEntity<Void> createUser(@RequestBody @Validated(OnCreate.class) CreateNewUserRequest createNewUserRequest) {
+        URI uri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/{id}").buildAndExpand(1).toUri();
+         Long id =  userService.createUser(createNewUserRequest);
          return ResponseEntity.ok().build();
     }
 
@@ -35,7 +38,7 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping()
+    @GetMapping("/username")
     public ResponseEntity<GetUserResponse> getUser(@RequestParam String username) {
         return ResponseEntity.ok(userService.getUser(username));
     }
@@ -46,7 +49,7 @@ public class UserController {
     }
 
     @PutMapping("/{userId}")
-    public ResponseEntity<Void> updateUser(@PathVariable Long userId, @RequestBody @Valid CreateNewUserRequest createNewUserRequest) {
+    public ResponseEntity<Void> updateUser(@PathVariable Long userId, @RequestBody @Validated(OnUpdate.class) CreateNewUserRequest createNewUserRequest) {
         userService.updateUser(userId, createNewUserRequest);
         return ResponseEntity.ok().build();
     }

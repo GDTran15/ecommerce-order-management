@@ -10,9 +10,15 @@ public interface UserRepository {
 
      List<User> findAll();
 
-     void save(User user);
+     Long save(User user);
 
      void deleteUserByUsername(String username);
 
      void updateUser(Long userId,User user);
+
+     boolean existsByUsername(String username);
+
+     boolean existsByEmail(String email);
+
+     boolean existsByPhoneNumber(String phoneNumber);
 }
