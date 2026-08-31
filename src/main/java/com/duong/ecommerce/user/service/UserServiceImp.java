@@ -1,9 +1,7 @@
 package com.duong.ecommerce.user;
 
 import com.duong.ecommerce.exception.UserAlreadyExistedException;
-import com.duong.ecommerce.user.dto.CreateNewUserRequest;
-import com.duong.ecommerce.user.dto.LoginRequest;
-import com.duong.ecommerce.user.dto.GetUserResponse;
+import com.duong.ecommerce.user.dto.*;
 import com.duong.ecommerce.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
