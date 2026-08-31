@@ -1,8 +1,8 @@
-package com.duong.ecommerce.auth;
+package com.duong.ecommerce.security;
 
 import com.duong.ecommerce.exception.ResourceNotFoundException;
-import com.duong.ecommerce.user.User;
-import com.duong.ecommerce.user.UserRepository;
+import com.duong.ecommerce.user.model.User;
+import com.duong.ecommerce.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

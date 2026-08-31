@@ -1,6 +1,8 @@
 package com.duong.ecommerce.security;
 
+import com.duong.ecommerce.exception.TokenExpiredException;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.InvalidKeyException;
@@ -30,7 +32,7 @@ public class JwtServiceImpl implements JwtService{
 
 
     @Override
-    public String generateAccessToken(UserDetails userDetails) {
+    public String generateAccessToken(MyUserDetails userDetails) {
         Map<String,Object> claims = new HashMap<>();
         Set<String> roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet());
         claims.put("roles", roles);
@@ -38,8 +40,10 @@ public class JwtServiceImpl implements JwtService{
     }
 
     @Override
-    public String generateRefreshToken(UserDetails userDetails) {
-        return buildToken(new HashMap<>(),userDetails,refreshExp);
+    public String generateRefreshToken(MyUserDetails userDetails) {
+        Map<String,Object> claims = new HashMap<>();
+        claims.put("token_version", userDetails.getTokenVersion());
+        return buildToken(claims,userDetails,refreshExp);
     }
 
     private String buildToken(Map<String,Object> claims, UserDetails userDetails , long exp){
@@ -59,10 +63,10 @@ public class JwtServiceImpl implements JwtService{
         }
 
 
+
+    @Override
     public Claims extractAll(String token){
         try {
-
-
             return Jwts.parser()
                     .verifyWith(getKey())
                     .build()
@@ -70,21 +74,15 @@ public class JwtServiceImpl implements JwtService{
                     .getPayload();
         } catch (SignatureException e){
             throw new InvalidKeyException("Key is invalid");
+        } catch (ExpiredJwtException e) {
+            throw new TokenExpiredException("Token has been has expired");
         }
     }
 
 
     private SecretKey getKey(){
-
         byte[] keyByte = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(keyByte); // dùng thuật toán để tạo SecretKey keyBytes
-
-    }
-
-    @Override
-    public boolean isTokenValid(String username, UserDetails userDetails) {
-
-        return username.equals(userDetails.getUsername());
     }
 
     @Override

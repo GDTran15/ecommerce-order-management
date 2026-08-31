@@ -1,18 +1,19 @@
 package com.duong.ecommerce.security;
 
+import io.jsonwebtoken.Claims;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.Instant;
 
 public interface JwtService {
 
-    String generateAccessToken(UserDetails userDetails);
+    String generateAccessToken(MyUserDetails userDetails);
 
-    String generateRefreshToken(UserDetails userDetails);
+    String generateRefreshToken(MyUserDetails userDetails);
 
     String extractUsername(String token);
 
-    boolean isTokenValid(String username, UserDetails userDetails);
+    Claims extractAll(String token);
 
     Instant extractExpDate(String refreshToken);
 }

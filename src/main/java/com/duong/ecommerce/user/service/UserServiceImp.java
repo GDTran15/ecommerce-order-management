@@ -1,8 +1,10 @@
-package com.duong.ecommerce.user;
+package com.duong.ecommerce.user.service;
 
 import com.duong.ecommerce.exception.UserAlreadyExistedException;
+import com.duong.ecommerce.user.repository.UserRepository;
 import com.duong.ecommerce.user.dto.*;
 import com.duong.ecommerce.exception.ResourceNotFoundException;
+import com.duong.ecommerce.user.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -10,6 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,14 +25,14 @@ public class UserServiceImp implements UserService {
     private final AuthenticationManager authenticationManager;
     private final UserToGetUserResponse userToGetUserResponse;
     private final CreateNewUserToUser createNewUserToUser;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder(12); // tạm thời như vậy nếu sau này có authentication sửa lại
+    private final PasswordEncoder passwordEncoder; // tạm thời như vậy nếu sau này có authentication sửa lại
 
 
     @Override
     public Long createUser(CreateNewUserRequest createNewUserRequest) {
         checkIfUserExist(createNewUserRequest.username(), createNewUserRequest.email(), createNewUserRequest.phoneNumber());
         User user = createNewUserToUser.apply(createNewUserRequest);
-        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 

@@ -5,19 +5,11 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.Instant;
-
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RefreshToken {
-    private Long id;
-    private String token;
+public class UserRole {
     private Long userId;
-    private Instant expiredDate;
-    private Boolean revoked;
-    private Instant createdAt;
-
-
+    private Long roleId;
 }

@@ -1,4 +1,4 @@
-package com.duong.ecommerce.auth;
+package com.duong.ecommerce.security;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;

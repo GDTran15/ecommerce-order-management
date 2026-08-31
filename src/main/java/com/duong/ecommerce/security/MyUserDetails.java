@@ -1,9 +1,10 @@
-package com.duong.ecommerce.auth;
+package com.duong.ecommerce.security;
 
-import com.duong.ecommerce.user.User;
+import com.duong.ecommerce.user.model.User;
 
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
@@ -18,10 +19,18 @@ public class MyUserDetails implements UserDetails {
         this.user = user;
     }
 
+    public Long getUserId(){
+         return user.getId();
+    }
+
+    public Integer getTokenVersion() { return user.getTokenVersion();}
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
+        return user.getRoles().stream().map(
+                role ->  new SimpleGrantedAuthority("ROLE_" + role)
+        ).toList();
     }
 
     @Override
@@ -43,4 +52,10 @@ public class MyUserDetails implements UserDetails {
     public boolean isAccountNonExpired(){
         return  true;
     }
+
+    @Override
+    public boolean isCredentialsNonExpired(){ return  true;}
+
+    @Override
+    public boolean isEnabled(){return true;}
 }

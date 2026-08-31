@@ -1,5 +1,6 @@
-package com.duong.ecommerce.user;
+package com.duong.ecommerce.user.controller;
 
+import com.duong.ecommerce.user.service.UserService;
 import com.duong.ecommerce.user.dto.CreateNewUserRequest;
 import com.duong.ecommerce.user.dto.LoginRequest;
 import com.duong.ecommerce.user.dto.GetUserResponse;
@@ -25,19 +26,7 @@ public class UserController {
 
     private final UserService userService;
 
-    @PostMapping()
-    public ResponseEntity<Void> createUser(@RequestBody @Validated(OnCreate.class) CreateNewUserRequest createNewUserRequest) {
-        Long id =  userService.createUser(createNewUserRequest);
 
-        URI uri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/{id}").buildAndExpand(id).toUri();
-         return ResponseEntity.created(uri).build();
-    }
-
-    @PostMapping("/login")
-    public ResponseEntity<Void> login(@RequestBody LoginRequest request){
-        userService.loginUser(request);
-        return ResponseEntity.noContent().build();
-    }
 
     @DeleteMapping()
     public ResponseEntity<Void> deleteUser(@RequestParam String username) {

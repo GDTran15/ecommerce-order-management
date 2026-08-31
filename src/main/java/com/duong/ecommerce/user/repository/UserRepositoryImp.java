@@ -1,14 +1,18 @@
-package com.duong.ecommerce.user;
+package com.duong.ecommerce.user.repository;
 
 import com.duong.ecommerce.exception.ResourceNotFoundException;
+import com.duong.ecommerce.user.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import javax.swing.text.html.Option;
 import java.sql.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 @RequiredArgsConstructor
@@ -21,29 +25,62 @@ public class UserRepositoryImp implements UserRepository {
     public Optional<User> findByUsername(String username) {
 
         String sql = """
-                SELECT *
-                FROM users
+                SELECT 
+                    u.id,
+                    u.username,
+                    u.password,
+                    u.email,
+                    u.first_name,
+                    u.last_name,
+                    u.phone_number,
+                    u.date_of_birth,
+                    u.created_at,
+                    r.name
+                FROM users u
+                JOIN user_roles ur ON u.id = ur.user_id
+                JOIN roles  r ON ur.role_id = r.id
                 WHERE username = ?
                 """;
 
-        List<User> users = jdbcTemplate.query(
+        User result = jdbcTemplate.query(
                 sql,
-                (rs, rowNum) -> User.builder()
-                        .id(rs.getLong("id"))
-                        .username(rs.getString("username"))
-                        .password(rs.getString("password"))
-                        .email(rs.getString("email"))
-                        .firstName(rs.getString("first_name"))
-                        .lastName(rs.getString("last_name"))
-                        .phoneNumber(rs.getString("phone_number"))
-                        .dateOfBirth(rs.getDate("date_of_birth").toLocalDate())
-                        .createdAt(rs.getTimestamp("created_at").toInstant())
-                        .build(),
+                rs -> {
+                  User user = null;
+                    Set<String> roles = new HashSet<>();
+
+                    while (rs.next()){
+                        if (user == null){
+                            user =  User.builder()
+                                .id(rs.getLong("id"))
+                                .username(rs.getString("username"))
+                                .password(rs.getString("password"))
+                                .email(rs.getString("email"))
+                                .firstName(rs.getString("first_name"))
+                                .lastName(rs.getString("last_name"))
+                                .phoneNumber(rs.getString("phone_number"))
+                                .dateOfBirth(rs.getDate("date_of_birth").toLocalDate())
+                                .createdAt(rs.getTimestamp("created_at").toInstant())
+                                .build();
+                        }
+                        roles.add(rs.getString("name"));
+
+                    }
+                    if(user != null){
+                        user.setRoles(roles);
+                    }
+                    return user;
+                },
                 username
         );
 
-        return users.stream().findFirst();
+        if (result == null){
+            return Optional.empty();
+        }
+
+        return Optional.of(result);
+
     }
+
 
     @Override
     public List<User> findAll() {
@@ -190,4 +227,14 @@ public class UserRepositoryImp implements UserRepository {
 
         return Boolean.TRUE.equals(exists);
     }
+
+    @Override
+    public void bumpTokenVersion(Long userId) {
+        String sql = """
+                UPDATE users SET token_version = token_version + 1 WHERE user_id = ?
+                """;
+        jdbcTemplate.update(sql,userId);
+    }
+
+
 }

@@ -1,4 +1,4 @@
-package com.duong.ecommerce.user;
+package com.duong.ecommerce.user.model;
 
 
 
@@ -7,10 +7,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.stereotype.Component;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.Set;
 
 
 @Data
@@ -21,7 +21,6 @@ public class User {
 
 
     private Long id;
-
     @Size(min = 8, max = 20)
     @NotBlank
     private String username;
@@ -40,5 +39,7 @@ public class User {
     private LocalDate dateOfBirth;
     @NotNull
     private Instant createdAt;
+    private Integer tokenVersion;
+    private Set<String> roles;
 
 }

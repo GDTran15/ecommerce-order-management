@@ -1,7 +1,5 @@
 package com.duong.ecommerce.exception;
 
-import com.duong.ecommerce.product.ResourceAlreadyExistedException;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
@@ -54,5 +52,20 @@ public class GlobalExceptionHandler {
         ProblemDetail problemDetail =ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT,e.getMessage());
         problemDetail.setTitle("Out of stock");
         return ResponseEntity.status(HttpStatus.CONFLICT).body(problemDetail);
+    }
+
+    @ExceptionHandler(InvalidTokenException.class)
+    public ResponseEntity<ProblemDetail> handleInvalidTokenException(InvalidTokenException e){
+        ProblemDetail problem =  ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED,e.getMessage());
+        problem.setTitle("Invalid Token");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(problem);
+
+    }
+    @ExceptionHandler(TokenExpiredException.class)
+    public ResponseEntity<ProblemDetail> handleTokenExpiredException(TokenExpiredException e){
+        ProblemDetail problem =  ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED,e.getMessage());
+        problem.setTitle("Invalid Token");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(problem);
+
     }
 }

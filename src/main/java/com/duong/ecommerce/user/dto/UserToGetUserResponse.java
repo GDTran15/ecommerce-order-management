@@ -1,6 +1,6 @@
-package com.duong.ecommerce.user;
+package com.duong.ecommerce.user.dto;
 
-import com.duong.ecommerce.user.dto.GetUserResponse;
+import com.duong.ecommerce.user.model.User;
 import org.springframework.stereotype.Component;
 
 import java.util.function.Function;

@@ -1,5 +1,6 @@
 package com.duong.ecommerce.product;
 
+import com.duong.ecommerce.exception.ResourceAlreadyExistedException;
 import com.duong.ecommerce.product.dto.CreateProductDTO;
 import com.duong.ecommerce.product.dto.ProductDTOResponse;
 import com.duong.ecommerce.exception.ResourceNotFoundException;
