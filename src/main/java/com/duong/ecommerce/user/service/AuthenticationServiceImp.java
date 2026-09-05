@@ -46,10 +46,10 @@ public class AuthenticationServiceImp implements AuthenticationService{
             throw new UserAlreadyExistedException("Username already existed");
         }
         if (emailExisted){
-            throw new UserAlreadyExistedException("Username already existed");
+            throw new UserAlreadyExistedException("Email already existed");
         }
         if (phoneNumberExisted){
-            throw new UserAlreadyExistedException("Username already existed");
+            throw new UserAlreadyExistedException("Phone already existed");
         }
     }
 
