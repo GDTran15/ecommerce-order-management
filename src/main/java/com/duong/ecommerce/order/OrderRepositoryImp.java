@@ -59,9 +59,9 @@ package com.duong.ecommerce.order;
 
         private Order productRowMapper (ResultSet rs,int rowNum) throws SQLException {
                 return Order.builder()
-                        .id(rs.getLong("d"))
+                        .id(rs.getLong("id"))
                         .customerId(rs.getLong("customer_id"))
-                        .status(OrderStatus.valueOf(rs.getString("order_status")))
+                        .status(OrderStatus.valueOf(rs.getString("status")))
                         .totalAmount(rs.getBigDecimal("total_amount"))
                         .build();
         }
