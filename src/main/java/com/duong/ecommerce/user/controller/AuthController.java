@@ -39,8 +39,14 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<Void> logout(){
-        authService.logoutUser();
+    public ResponseEntity<Void> logout(@RequestBody RefreshRequest request){
+        authService.logoutUser(request);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/logout/all-devices")
+    public ResponseEntity<Void> logoutAll(){
+        authService.logoutAllUser();
         return ResponseEntity.noContent().build();
     }
 

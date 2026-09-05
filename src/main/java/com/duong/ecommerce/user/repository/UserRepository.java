@@ -23,4 +23,5 @@ public interface UserRepository {
      boolean existsByPhoneNumber(String phoneNumber);
 
     void bumpTokenVersion(Long userId);
+
 }

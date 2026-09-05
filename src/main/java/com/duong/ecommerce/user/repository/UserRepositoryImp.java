@@ -39,7 +39,7 @@ public class UserRepositoryImp implements UserRepository {
                 FROM users u
                 JOIN user_roles ur ON u.id = ur.user_id
                 JOIN roles  r ON ur.role_id = r.id
-                WHERE username = ?
+                WHERE u.username = ?
                 """;
 
         User result = jdbcTemplate.query(
@@ -184,7 +184,7 @@ public class UserRepositoryImp implements UserRepository {
 
         String sql = """
                 SELECT EXISTS(
-                    SELECT 1
+                    SELECT *
                     FROM users
                     WHERE username = ?
                 )
@@ -203,7 +203,7 @@ public class UserRepositoryImp implements UserRepository {
     public boolean existsByEmail(String email) {
         String sql = """
                 SELECT EXISTS(
-                    SELECT 1
+                    SELECT *
                        FROM users
                        WHERE email = ?
                 )
@@ -217,7 +217,7 @@ public class UserRepositoryImp implements UserRepository {
     public boolean existsByPhoneNumber(String phoneNumber) {
         String sql = """
                 SELECT EXISTS(
-                    SELECT 1
+                    SELECT *
                        FROM users
                        WHERE phone_number = ?
                 )

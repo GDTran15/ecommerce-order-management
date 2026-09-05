@@ -12,5 +12,8 @@ public interface AuthenticationService {
 
     RefreshResponse getAccessToken(RefreshRequest request);
 
-    void logoutUser();
+    void logoutUser(RefreshRequest request);
+
+    void logoutAllUser();
+
 }

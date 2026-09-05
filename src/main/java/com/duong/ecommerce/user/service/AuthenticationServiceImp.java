@@ -15,6 +15,7 @@ import com.duong.ecommerce.user.repository.UserRepository;
 import com.duong.ecommerce.user.repository.UserRoleRepository;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -24,6 +25,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -104,7 +108,7 @@ public class AuthenticationServiceImp implements AuthenticationService{
 
         MyUserDetails userDetails = (MyUserDetails) userDetailsService.loadUserByUsername(username);
 
-        if (refreshToken.getRevoked() || !tokenVersion.equals(userDetails.getTokenVersion())){
+        if (refreshToken.getRevoked() || !Objects.equals(tokenVersion,userDetails.getTokenVersion())){
             throw new InvalidTokenException("Refresh token has been revoked");
         }
 
@@ -114,10 +118,27 @@ public class AuthenticationServiceImp implements AuthenticationService{
     }
 
     @Override
-    public void logoutUser() {
+    public void logoutUser(RefreshRequest request) {
+
+        MyUserDetails myUserDetails = (MyUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        int assertRow= refreshTokenRepo.revokedByTokenAndUserId(request.refreshToken(),myUserDetails.getUserId());
+        if (assertRow == 0){
+            throw new InvalidTokenException("Token invalid");
+        }
+    }
+
+    @Override
+    public void logoutAllUser() {
         MyUserDetails myUserDetails = (MyUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         userRepo.bumpTokenVersion(myUserDetails.getUserId());
-        refreshTokenRepo.revokedByUserId(myUserDetails.getUserId());
-
     }
+
+    @Scheduled(fixedDelay = 1, timeUnit = TimeUnit.HOURS)
+    public void cleanUpExpiredToken(){
+
+        refreshTokenRepo.deleteExpiredToken();
+    }
+
+
+
 }
